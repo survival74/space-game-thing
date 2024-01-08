@@ -42,8 +42,8 @@ GameObject:
   - component: {fileID: 6063860224021509474}
   - component: {fileID: 6063860224021509475}
   - component: {fileID: 6063860224021509484}
-  - component: {fileID: 6063860224021509485}
   - component: {fileID: 6063860224021509473}
+  - component: {fileID: 6063860224021509485}
   m_Layer: 0
   m_Name: Bean
   m_TagString: Untagged
@@ -117,6 +117,32 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6063860224021509473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6063860224021509486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d9fc08ad24299e45b927ca206ca9539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterController: {fileID: 6063860224021509485}
+  firstPersonTransform: {fileID: 6063860222889315028}
+  movementSpeed: 5
+  acceleration: 12
+  deceleration: 11
+  airAcceleration: 2.7
+  airDeceleration: 11
+  jumpForce: 5.18
+  gravityForce: 12.4
+  rigidbodyPushForce: 1
+  rigidbodyPushOffset: 0.35
+  lookSensitivity: 1
+  lookMultiplier: 10
+  lookAngleLimit: {x: 85, y: -1, z: -1}
 --- !u!143 &6063860224021509485
 CharacterController:
   m_ObjectHideFlags: 0
@@ -135,29 +161,3 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6063860224021509473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6063860224021509486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d9fc08ad24299e45b927ca206ca9539, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterController: {fileID: 6063860224021509485}
-  firstPersonTransform: {fileID: 6063860222889315028}
-  movementSpeed: 10
-  acceleration: 12
-  deceleration: 11
-  airAcceleration: 2.7
-  airDeceleration: 11
-  jumpForce: 5.18
-  gravityForce: 12.4
-  rigidbodyPushForce: 1
-  rigidbodyPushOffset: 0.35
-  lookSensitivity: 1
-  lookMultiplier: 10
-  lookAngleLimit: {x: 85, y: -1, z: -1}

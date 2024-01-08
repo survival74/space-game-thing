@@ -1,10 +1,8 @@
+using GR.Interactable;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.MPE;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.LowLevel;
 
 namespace GR
 {
@@ -16,8 +14,11 @@ namespace GR
 		[SerializeField] private CharacterController characterController;
 		[SerializeField] private Transform firstPersonTransform;
 
+		[SerializeField] private float interactionDistance = 2.4f;
+
+
 		[Header("Movement Properties")]
-		[SerializeField] protected float movementSpeed = 10.0f;
+		[SerializeField] protected float movementSpeed = 5.0f;
 
 		[SerializeField] protected float acceleration = 12.0f;
 		[SerializeField] protected float deceleration = 11.0f;
@@ -34,16 +35,31 @@ namespace GR
 		[SerializeField] protected float rigidbodyPushForce = 1.0f;
 		[SerializeField] protected float rigidbodyPushOffset = 0.35f;
 
+
 		[Header("Camera Properties")]
 		[SerializeField] private float lookSensitivity = 1.0f;
 		[SerializeField] private float lookMultiplier = 10.0f;
 		[SerializeField] private Vector3 lookAngleLimit = new Vector3(85.0f, -1.0f, -1.0f);
 
 
+		[Header("Multipliers")]
+		[SerializeField] private float speedMultiplier = 1.3f;
+		
+		[Space]
+		[SerializeField] private float sprintSpeedMultiplier = 1.0f;
+		[SerializeField] private float strafeSpeedMultiplier = 0.83f;
+		[SerializeField] private float forwardSpeedMultiplier = 1.0f;
+		[SerializeField] private float backwardSpeedMultiplier = 0.74f;
+
+		[Space]
+		[SerializeField] private float airSpeedMultiplier = 0.30f;
+
+
 		private Camera cam;
 		private Vector3 lookAngles;
 		private GameInput.PlayerControls input;
 		private Vector3 velocity = Vector3.zero;
+		
 
 
 		public void SetCameraView(Transform viewTransform)
@@ -68,21 +84,35 @@ namespace GR
 		}
 
 
-		private void Update()
-		{
-			if (!input.PlayerActions.enabled)
-				return;
 
+		private float CalculateMovementSpeed(Vector2 movementVector)
+		{
+			float speed = movementSpeed;
+			if (input.PlayerActions.Sprint.IsPressed())
+				speed *= sprintSpeedMultiplier;
+
+			if (movementVector.x != 0.0f)
+				speed *= strafeSpeedMultiplier;
+			if (movementVector.y != 0.0f)
+				speed *= movementVector.y > 0.0f ? forwardSpeedMultiplier : backwardSpeedMultiplier;
+			speed *= speedMultiplier;
+
+			return characterController.isGrounded ? speed : speed * airSpeedMultiplier;
+		}
+
+		private void LookAndMove()
+		{
 			// Update player movement
 			bool isGrounded = characterController.isGrounded;
-			Vector2 moveInput = Vector2.ClampMagnitude(input.PlayerActions.Move.ReadValue<Vector2>(), 1.0f) * movementSpeed;
+			Vector2 moveInput = Vector2.ClampMagnitude(input.PlayerActions.Move.ReadValue<Vector2>(), 1.0f);
+			moveInput *= CalculateMovementSpeed(moveInput);
 
 			Vector3 moveForce = new Vector3(moveInput.x, 0.0f, moveInput.y);
 			if (isGrounded && input.PlayerActions.Jump.triggered)
 				velocity.y = jumpForce;
 
 			moveForce = cam.transform.TransformDirection(moveForce);
-			
+
 			if (!isGrounded)
 			{
 				float accelerationCoef = moveForce.sqrMagnitude > 0.0f ? airAcceleration : airDeceleration;
@@ -117,6 +147,30 @@ namespace GR
 			Vector3 yRotation = new Vector3(0.0f, lookInput.y, 0.0f);
 			transform.rotation *= Quaternion.Euler(yRotation);
 		}
+
+
+
+		private void Update()
+		{
+			if (!input.PlayerActions.enabled)
+				return;
+
+			LookAndMove();
+
+			RaycastHit hit;
+			if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, interactionDistance))
+			{
+				IInteractable interactable;
+				if (hit.transform.TryGetComponent(out interactable)
+					&& interactable.CanInteract())
+				{
+					interactable.Focused();
+					if (input.PlayerActions.Interact.triggered)
+						interactable.Interact(this);
+				}
+			}
+		}
+
 
 		private void OnControllerColliderHit(ControllerColliderHit hit)
 		{
