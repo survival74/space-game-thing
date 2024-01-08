@@ -1,4 +1,5 @@
 using GR.Interactable;
+using GR.Spaceship;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.MPE;
@@ -6,7 +7,6 @@ using UnityEngine;
 
 namespace GR
 {
-	[RequireComponent(typeof(CharacterController))]
 	public class Player : MonoBehaviour
 	{
 		// Configurable
@@ -54,12 +54,17 @@ namespace GR
 		[Space]
 		[SerializeField] private float airSpeedMultiplier = 0.30f;
 
+		[Header("Player Object")]
+		public GameObject playerObject;
+
+
+		private bool processUpdate = true;
+		public Vroomies vroomer = null;
 
 		private Camera cam;
 		private Vector3 lookAngles;
 		private GameInput.PlayerControls input;
 		private Vector3 velocity = Vector3.zero;
-		
 
 
 		public void SetCameraView(Transform viewTransform)
@@ -72,11 +77,17 @@ namespace GR
 			fpCam.localRotation = Quaternion.identity;
 		}
 
+		public void ResetCamera()
+		{
+			SetCameraView(firstPersonTransform);
+		}
+
+
 		private void Start()
 		{
 			input = new GameInput.PlayerControls();
 			if (Camera.main != null)
-				SetCameraView(firstPersonTransform);
+				ResetCamera();
 
 			input.Enable();
 			Cursor.lockState = CursorLockMode.Locked;
@@ -155,6 +166,13 @@ namespace GR
 			if (!input.PlayerActions.enabled)
 				return;
 
+			if (!processUpdate)
+			{
+				if (input.PlayerActions.Interact.triggered)
+					vroomer.Exit();
+				return;
+			}
+
 			LookAndMove();
 
 			RaycastHit hit;
@@ -186,6 +204,27 @@ namespace GR
 
 			Vector3 force = (hit.moveDirection + Vector3.up * rigidbodyPushOffset) * velocity.magnitude * rigidbodyPushForce;
 			rigid.AddForceAtPosition(force, hit.point);
+		}
+
+
+
+		// Player vrooming stuff
+		private void UpdateComponents()
+		{
+			playerObject.SetActive(processUpdate);
+			characterController.enabled = processUpdate;
+		}
+
+		public void Disable()
+		{
+			processUpdate = false;
+			UpdateComponents();
+		}
+
+		public void Enable()
+		{
+			processUpdate = true;
+			UpdateComponents();
 		}
 	}
 }
