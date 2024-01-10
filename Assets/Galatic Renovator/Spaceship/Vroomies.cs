@@ -39,5 +39,10 @@ namespace GR.Spaceship
 			playerInside.EnableCharacter(); // Knock knock
 			camView.enabled = false;
 		}
+
+
+		private void Update()
+		{
+		}
 	}
 }
