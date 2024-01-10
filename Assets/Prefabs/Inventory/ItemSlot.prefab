@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 7391975579731841797}
   - component: {fileID: 492046821696273135}
   - component: {fileID: 9104710952571749866}
+  - component: {fileID: 5810694645704682446}
   m_Layer: 5
-  m_Name: InventorySlot
+  m_Name: ItemSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,3 +77,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5810694645704682446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6519187996524991818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4530a5157127e994d81c0ba51c276da0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HoverColor: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 1}
+  SelectedColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
+  NormalColor: {r: 0, g: 0, b: 0, a: 0.7490196}
+  selected: 0

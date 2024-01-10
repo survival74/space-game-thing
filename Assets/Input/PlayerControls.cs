@@ -73,6 +73,24 @@ namespace GameInput
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Drop Item"",
+                    ""type"": ""Button"",
+                    ""id"": ""f298e258-8439-4c58-adf9-8b0fb934dce6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""9c032619-81b7-4037-9e44-32f93dddc4ad"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -361,6 +379,50 @@ namespace GameInput
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1969c46c-6c51-4df2-9eca-371b494836e7"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop Item"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bff622f6-0632-46db-85fc-70df5fd9a407"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop Item"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""48913821-196a-4cf8-b635-3a5e7ab6a308"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7c365975-edd2-4968-ad56-1de34b6d1da7"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -374,6 +436,8 @@ namespace GameInput
             m_PlayerActions_Jump = m_PlayerActions.FindAction("Jump", throwIfNotFound: true);
             m_PlayerActions_Sprint = m_PlayerActions.FindAction("Sprint", throwIfNotFound: true);
             m_PlayerActions_Interact = m_PlayerActions.FindAction("Interact", throwIfNotFound: true);
+            m_PlayerActions_DropItem = m_PlayerActions.FindAction("Drop Item", throwIfNotFound: true);
+            m_PlayerActions_Inventory = m_PlayerActions.FindAction("Inventory", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -438,6 +502,8 @@ namespace GameInput
         private readonly InputAction m_PlayerActions_Jump;
         private readonly InputAction m_PlayerActions_Sprint;
         private readonly InputAction m_PlayerActions_Interact;
+        private readonly InputAction m_PlayerActions_DropItem;
+        private readonly InputAction m_PlayerActions_Inventory;
         public struct PlayerActionsActions
         {
             private @PlayerControls m_Wrapper;
@@ -447,6 +513,8 @@ namespace GameInput
             public InputAction @Jump => m_Wrapper.m_PlayerActions_Jump;
             public InputAction @Sprint => m_Wrapper.m_PlayerActions_Sprint;
             public InputAction @Interact => m_Wrapper.m_PlayerActions_Interact;
+            public InputAction @DropItem => m_Wrapper.m_PlayerActions_DropItem;
+            public InputAction @Inventory => m_Wrapper.m_PlayerActions_Inventory;
             public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -471,6 +539,12 @@ namespace GameInput
                     @Interact.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnInteract;
                     @Interact.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnInteract;
                     @Interact.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnInteract;
+                    @DropItem.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnDropItem;
+                    @DropItem.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnDropItem;
+                    @DropItem.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnDropItem;
+                    @Inventory.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnInventory;
+                    @Inventory.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnInventory;
+                    @Inventory.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnInventory;
                 }
                 m_Wrapper.m_PlayerActionsActionsCallbackInterface = instance;
                 if (instance != null)
@@ -490,6 +564,12 @@ namespace GameInput
                     @Interact.started += instance.OnInteract;
                     @Interact.performed += instance.OnInteract;
                     @Interact.canceled += instance.OnInteract;
+                    @DropItem.started += instance.OnDropItem;
+                    @DropItem.performed += instance.OnDropItem;
+                    @DropItem.canceled += instance.OnDropItem;
+                    @Inventory.started += instance.OnInventory;
+                    @Inventory.performed += instance.OnInventory;
+                    @Inventory.canceled += instance.OnInventory;
                 }
             }
         }
@@ -501,6 +581,8 @@ namespace GameInput
             void OnJump(InputAction.CallbackContext context);
             void OnSprint(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
+            void OnDropItem(InputAction.CallbackContext context);
+            void OnInventory(InputAction.CallbackContext context);
         }
     }
 }

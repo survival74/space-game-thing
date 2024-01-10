@@ -22,7 +22,7 @@ namespace GR.Spaceship
 		public void Interact(Player who)
 		{
 			who.SetCameraView(viewTransform);
-			who.Disable(); // Who's there
+			who.DisableCharacter(); // Who's there
 
 			playerInside = who;
 			who.vroomer = this;
@@ -36,7 +36,7 @@ namespace GR.Spaceship
 			playerInside.transform.position = exitPosition.position;
 
 			playerInside.ResetCamera();
-			playerInside.Enable(); // Knock knock
+			playerInside.EnableCharacter(); // Knock knock
 			camView.enabled = false;
 		}
 	}

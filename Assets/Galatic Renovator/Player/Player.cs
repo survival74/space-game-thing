@@ -1,15 +1,18 @@
 using GR.Interactable;
+using GR.Inventory;
 using GR.Spaceship;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.MPE;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace GR
 {
 	public class Player : MonoBehaviour
 	{
-		// Configurable
+		public static Player localPlayer;
+
 		[Header("Player")]
 		[SerializeField] private CharacterController characterController;
 		[SerializeField] private Transform firstPersonTransform;
@@ -58,10 +61,10 @@ namespace GR
 		public GameObject playerObject;
 
 
-		private bool processUpdate = true;
+		public bool processUpdate = true;
 		public Vroomies vroomer = null;
 
-		private Camera cam;
+		public Camera cam;
 		private Vector3 lookAngles;
 		private GameInput.PlayerControls input;
 		private Vector3 velocity = Vector3.zero;
@@ -89,9 +92,22 @@ namespace GR
 			if (Camera.main != null)
 				ResetCamera();
 
+			localPlayer = this;
+			EnableInput();			
+		}
+
+		public void EnableInput()
+		{
 			input.Enable();
 			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
+		}
+
+		public void DisableInput()
+		{
+			input.Disable();
+			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
 		}
 
 
@@ -166,9 +182,16 @@ namespace GR
 			if (!input.PlayerActions.enabled)
 				return;
 
+
+			if (input.PlayerActions.DropItem.triggered)
+				InventoryManager.instance.DropItem(this);
+
+			if (input.PlayerActions.Inventory.triggered)
+				InventoryManager.Toggle();
+
 			if (!processUpdate)
 			{
-				if (input.PlayerActions.Interact.triggered)
+				if (input.PlayerActions.Interact.triggered && vroomer != null)
 					vroomer.Exit();
 				return;
 			}
@@ -215,13 +238,13 @@ namespace GR
 			characterController.enabled = processUpdate;
 		}
 
-		public void Disable()
+		public void DisableCharacter()
 		{
 			processUpdate = false;
 			UpdateComponents();
 		}
 
-		public void Enable()
+		public void EnableCharacter()
 		{
 			processUpdate = true;
 			UpdateComponents();
